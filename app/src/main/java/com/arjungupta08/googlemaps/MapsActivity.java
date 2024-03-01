@@ -2,6 +2,8 @@ package com.arjungupta08.googlemaps;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -13,10 +15,14 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.arjungupta08.googlemaps.databinding.ActivityMapsBinding;
 
+import java.util.List;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
+
+    private Geocoder geocoder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +30,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         binding = ActivityMapsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // initialise geocoder
+        geocoder = new Geocoder(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -45,16 +54,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         // Set Map Type (Optional)
-        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+//        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
         // Initialise LatLng
-        LatLng latLng = new LatLng(27.1751, 78.0421);
-        // Add a marker
-        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Taj Mahal").snippet("Wonder of the world");
-        mMap.addMarker(markerOptions);
-        // move the camera
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 16);
-        mMap.animateCamera(cameraUpdate);
+//        LatLng latLng = new LatLng(27.1751, 78.0421);
+//        // Add a marker
+//        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Taj Mahal").snippet("Wonder of the world");
+//        mMap.addMarker(markerOptions);
+//        // move the camera
+//        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 16);
+//        mMap.animateCamera(cameraUpdate);
+
+        try {
+            // Get LatLng from a place Name
+            List<Address> addresses = geocoder.getFromLocationName("Kanpur", 1);
+            Address address = addresses.get(0);
+
+            // Initialise LatLng
+            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+            // Add a marker
+            MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(address.getLocality()).snippet("Wonder of the world");
+            mMap.addMarker(markerOptions);
+            // move the camera
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 16);
+            mMap.animateCamera(cameraUpdate);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }
