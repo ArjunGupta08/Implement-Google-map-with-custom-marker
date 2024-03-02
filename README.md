@@ -26,7 +26,7 @@
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 16);
         mMap.animateCamera(cameraUpdate);
 
- ## Get LatLng from a place Name (Customize your onMapsReady method)
+ ## `Get LatLng from a place Name` (Customize your onMapsReady method)
    - As we were entring our Lat Lng Manually, Now we will extract our lat lng from a place name.
    - Here We will use GeoCoder to get our address from a name.
 
@@ -42,4 +42,10 @@
             LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
      - And Everything will remains same.
 
-    
+## `Set marker and get location on long click` 
+  - Implement onMapLongClickListener interface
+  - override method onMapLongClick
+  - use geoCoder to get address from Latlng
+
+            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            Address address = addresses.get(0);
