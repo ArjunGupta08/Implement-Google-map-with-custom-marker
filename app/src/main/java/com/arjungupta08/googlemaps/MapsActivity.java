@@ -13,13 +13,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.arjungupta08.googlemaps.databinding.ActivityMapsBinding;
 
 import java.io.IOException;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
+        GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerDragListener {
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
@@ -56,6 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         mMap.setOnMapLongClickListener(this);
+        mMap.setOnMarkerDragListener(this);
 
         // Set Map Type (Optional)
 //        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
@@ -94,7 +97,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
             Address address = addresses.get(0);
             // Set Marker Option
-            MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(address.getLocality()).snippet(address.getCountryName());
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(latLng)
+                    .title(address.getLocality())
+                    .snippet(address.getCountryName())
+                    .draggable(true);
+
             mMap.addMarker(markerOptions);
 
             CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 16);
@@ -102,6 +110,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void onMarkerDrag(@NonNull Marker marker) {
+
+    }
+
+    @Override
+    public void onMarkerDragEnd(@NonNull Marker marker) {
+    }
+
+    @Override
+    public void onMarkerDragStart(@NonNull Marker marker) {
+        List<Address> addresses = null;
+        try {
+            addresses = geocoder.getFromLocation(marker.getPosition().latitude, marker.getPosition().longitude, 1);
+            Address address = addresses.get(0);
+            marker.setTitle(address.getAddressLine(0));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
