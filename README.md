@@ -51,3 +51,10 @@
             Address address = addresses.get(0);
 
 ## `Drag Marker`
+    - Implement OnMarkerDragListener interface
+    - inside onLongClick method set MarkerOptions 
+            .draggable(true);
+    - update onMarkerDragStart method
+            addresses = geocoder.getFromLocation(marker.getPosition().latitude, marker.getPosition().longitude, 1);
+            Address address = addresses.get(0);
+            marker.setTitle(address.getAddressLine(0));
