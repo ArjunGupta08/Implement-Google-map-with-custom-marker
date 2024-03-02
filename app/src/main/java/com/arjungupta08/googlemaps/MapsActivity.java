@@ -1,5 +1,6 @@
 package com.arjungupta08.googlemaps;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 
 import android.location.Address;
@@ -15,9 +16,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.arjungupta08.googlemaps.databinding.ActivityMapsBinding;
 
+import java.io.IOException;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
@@ -53,6 +55,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        mMap.setOnMapLongClickListener(this);
+
         // Set Map Type (Optional)
 //        mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
 
@@ -83,4 +87,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    @Override
+    public void onMapLongClick(@NonNull LatLng latLng) {
+
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            Address address = addresses.get(0);
+            // Set Marker Option
+            MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(address.getLocality()).snippet(address.getCountryName());
+            mMap.addMarker(markerOptions);
+
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 16);
+            mMap.animateCamera(cameraUpdate);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
