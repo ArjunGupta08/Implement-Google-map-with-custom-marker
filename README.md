@@ -47,14 +47,36 @@
   - override method onMapLongClick
   - use geoCoder to get address from Latlng
 
-            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-            Address address = addresses.get(0);
+        List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+        Address address = addresses.get(0);
 
 ## `Drag Marker`
-    - Implement OnMarkerDragListener interface
-    - inside onLongClick method set MarkerOptions 
-            .draggable(true);
-    - update onMarkerDragStart method
-            addresses = geocoder.getFromLocation(marker.getPosition().latitude, marker.getPosition().longitude, 1);
-            Address address = addresses.get(0);
-            marker.setTitle(address.getAddressLine(0));
+   - Implement OnMarkerDragListener interface
+   -  inside onLongClick method set MarkerOptions
+
+    .draggable(true);
+   - update onMarkerDragStart method
+    
+    addresses = geocoder.getFromLocation(marker.getPosition().latitude, marker.getPosition().longitude, 1);
+    Address address = addresses.get(0);
+    marker.setTitle(address.getAddressLine(0));
+
+## `Set Current Location to the Map`
+   - implement location dependency.
+
+    implementation ("com.google.android.gms:play-services-location:21.1.0")
+   - Ask for Permission.
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+   - Show a dialog to ask location permission.
+   - if permission is granted call enableUserLocation method.
+          
+    public void enableUserLocation() {
+      mMap.setMyLocationEnabled(true);
+    }
+  - Now if permission is already provoided on opening the app than move camera the current location.
+  - Initialise FusedLocationProviderClient.
+  - Create a task to get last location using FusedLocationProviderClient.
+  - and update the camera on taskSuccessful.
+    
+          
