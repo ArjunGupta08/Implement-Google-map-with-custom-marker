@@ -78,5 +78,7 @@
   - Initialise FusedLocationProviderClient.
   - Create a task to get last location using FusedLocationProviderClient.
   - and update the camera on taskSuccessful.
-    
+
+## `Custom icon for MARKER`
+
           
