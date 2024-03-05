@@ -52,7 +52,7 @@
 
 ## `Drag Marker`
    - Implement OnMarkerDragListener interface
-   -  inside onLongClick method set MarkerOptions
+   - inside onLongClick method set MarkerOptions
 
     .draggable(true);
    - update onMarkerDragStart method
@@ -74,9 +74,53 @@
     public void enableUserLocation() {
       mMap.setMyLocationEnabled(true);
     }
-  - Now if permission is already provoided on opening the app than move camera the current location.
+  - Now if permission is already provoided on opening the app than move camera to the current location.
   - Initialise FusedLocationProviderClient.
   - Create a task to get last location using FusedLocationProviderClient.
   - and update the camera on taskSuccessful.
-    
+
+## `Custom icon for MARKER`
+  - Iniitialise locationRequest
+
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(500);
+        locationRequest.setFastestInterval(500);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+  - Create LocationCallback
+  - create startLocationUpdate and stopLocationUpdate methods for fusedLocationProviderClient
+  - Now create setUserLocationMarker method and initialise Marker and Circle.
+  
+        private void setUserLocationMarker(Location location) {
+          LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+          if (userLocationMarker == null) {
+              // Create new MarkerOption
+              MarkerOptions markerOptions = new MarkerOptions().position(latLng);
+              markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.car2));
+              markerOptions.rotation(location.getBearing());
+              markerOptions.anchor((float) 0.5, (float) 0.5);
+              userLocationMarker = mMap.addMarker(markerOptions);
+              mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+          } else{
+              // use previous marker
+              userLocationMarker.setPosition(latLng);
+              userLocationMarker.setRotation(location.getBearing());
+              mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17));
+          }
+          if (userLocationAccuracyCircle == null) {
+              CircleOptions circleOptions = new CircleOptions();
+              circleOptions.center(latLng);
+              circleOptions.strokeWidth(4);
+              circleOptions.strokeColor(ContextCompat.getColor(this, R.color.black));
+              circleOptions.fillColor(ContextCompat.getColor(this, R.color.black));
+              circleOptions.radius(location.getAccuracy());
+              userLocationAccuracyCircle = mMap.addCircle(circleOptions);
+          } else {
+              userLocationAccuracyCircle.setCenter(latLng);
+              userLocationAccuracyCircle.setRadius(location.getAccuracy());
+          }
+        }
+
+ - That's It.
+
           
